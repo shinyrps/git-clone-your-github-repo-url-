@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { mockPlaylists, mockSongs, mockRegions } from '../mock/musicData';
 import PlaylistCard from '../components/PlaylistCard';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
+import { usePlayer } from '../context/PlayerContext';
 
 const Home = () => {
   const [selectedRegion, setSelectedRegion] = useState('global');
+  const { playSong } = usePlayer();
 
   const getGreeting = () => {
     const hour = new Date().getHours();
