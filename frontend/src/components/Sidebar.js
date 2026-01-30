@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, Library, Plus, Heart, List } from 'lucide-react';
+import { Home, Search, Library, Plus, Heart, Headphones } from 'lucide-react';
 
 const Sidebar = () => {
   const location = useLocation();
@@ -17,12 +17,31 @@ const Sidebar = () => {
     <div className="w-64 bg-black text-white h-full flex flex-col fixed left-0 top-0 bottom-0">
       {/* Logo */}
       <div className="p-6">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 rounded-lg flex items-center justify-center transform rotate-3 hover:rotate-0 transition-transform duration-300 shadow-lg shadow-green-500/50">
-            <span className="text-white font-black text-2xl italic transform -rotate-3">S</span>
-            <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-lg"></div>
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="relative w-12 h-12">
+            {/* Royal background with gradient */}
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-600 via-indigo-700 to-purple-900 rounded-xl shadow-2xl shadow-purple-500/50 group-hover:shadow-purple-400/70 transition-all duration-300"></div>
+            
+            {/* Golden border */}
+            <div className="absolute inset-0 rounded-xl border-2 border-yellow-400/30 group-hover:border-yellow-400/60 transition-all duration-300"></div>
+            
+            {/* Letter S */}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-white font-black text-2xl z-10 drop-shadow-lg">S</span>
+            </div>
+            
+            {/* Headphone icon overlay */}
+            <div className="absolute -top-1 -right-1 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-full p-1 shadow-lg group-hover:scale-110 transition-transform duration-300">
+              <Headphones size={14} className="text-purple-900" strokeWidth={3} />
+            </div>
+            
+            {/* Shine effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-white/20 via-transparent to-transparent rounded-xl opacity-60"></div>
           </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Shinyfy</span>
+          
+          <span className="text-2xl font-bold bg-gradient-to-r from-purple-300 via-white to-purple-300 bg-clip-text text-transparent drop-shadow-lg">
+            Shinyfy
+          </span>
         </Link>
       </div>
 
