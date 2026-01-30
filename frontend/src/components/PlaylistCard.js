@@ -7,12 +7,12 @@ const PlaylistCard = ({ playlist }) => {
 
   return (
     <div
-      onClick={() => navigate(`/playlist/${playlist.id}`)}
+      onClick={() => navigate(`/playlist/${playlist.playlist_id || playlist.id}`)}
       className="bg-gray-900 rounded-lg p-4 cursor-pointer transition-all duration-300 hover:bg-gray-800 group"
     >
       <div className="relative mb-4">
         <img
-          src={playlist.coverUrl}
+          src={playlist.cover_url || playlist.coverUrl}
           alt={playlist.name}
           className="w-full aspect-square object-cover rounded-md"
         />
