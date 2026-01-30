@@ -57,7 +57,7 @@ const TrackList = ({ songs, showHeader = true, playlist = null }) => {
               </div>
               <div className="flex items-center gap-3 min-w-0">
                 <img
-                  src={song.coverUrl}
+                  src={song.cover_url || song.coverUrl}
                   alt={song.title}
                   className="w-10 h-10 rounded object-cover"
                 />
