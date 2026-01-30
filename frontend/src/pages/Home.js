@@ -120,11 +120,11 @@ const Home = () => {
           {recentlyPlayed.map((song) => (
             <div
               key={song.id}
-              onClick={() => playSong(song, mockSongs)}
+              onClick={() => playSong(song, songs)}
               className="bg-gray-800/40 rounded-md flex items-center gap-4 cursor-pointer hover:bg-gray-700/60 transition-colors group"
             >
               <img
-                src={song.coverUrl}
+                src={song.cover_url}
                 alt={song.title}
                 className="w-20 h-20 rounded-l-md object-cover"
               />
