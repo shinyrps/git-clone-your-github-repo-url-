@@ -104,7 +104,7 @@ const Search = () => {
               type="text"
               placeholder="What do you want to listen to?"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={handleInputChange}
               className="w-full bg-white text-black pl-12 pr-12 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-white font-medium"
             />
             {searchQuery && (
