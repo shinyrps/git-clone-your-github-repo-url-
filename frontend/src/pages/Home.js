@@ -49,6 +49,7 @@ const Home = () => {
           {recentlyPlayed.map((song) => (
             <div
               key={song.id}
+              onClick={() => playSong(song, mockSongs)}
               className="bg-gray-800/40 rounded-md flex items-center gap-4 cursor-pointer hover:bg-gray-700/60 transition-colors group"
             >
               <img
@@ -57,6 +58,9 @@ const Home = () => {
                 className="w-20 h-20 rounded-l-md object-cover"
               />
               <p className="font-semibold truncate flex-1">{song.title}</p>
+              <div className="mr-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Play size={20} fill="white" className="text-white" />
+              </div>
             </div>
           ))}
         </div>
