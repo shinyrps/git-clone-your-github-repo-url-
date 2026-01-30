@@ -1,37 +1,56 @@
 import React, { useState } from 'react';
 import { Search as SearchIcon, X } from 'lucide-react';
-import { mockSongs, mockPlaylists, mockArtists } from '../mock/musicData';
 import TrackList from '../components/TrackList';
 import PlaylistCard from '../components/PlaylistCard';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [filteredSongs, setFilteredSongs] = useState([]);
+  const [filteredPlaylists, setFilteredPlaylists] = useState([]);
+  const [filteredArtists, setFilteredArtists] = useState([]);
+  const [searching, setSearching] = useState(false);
 
   const filters = ['all', 'songs', 'playlists', 'artists'];
 
-  const filteredSongs = searchQuery
-    ? mockSongs.filter(
-        (song) =>
-          song.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          song.artist.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          song.album.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const handleSearch = async (query) => {
+    if (!query.trim()) {
+      setFilteredSongs([]);
+      setFilteredPlaylists([]);
+      setFilteredArtists([]);
+      return;
+    }
 
-  const filteredPlaylists = searchQuery
-    ? mockPlaylists.filter(
-        (playlist) =>
-          playlist.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          playlist.description.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+    try {
+      setSearching(true);
+      const response = await axios.get(`${API}/songs/search?q=${encodeURIComponent(query)}`);
+      setFilteredSongs(response.data.songs || []);
+      setFilteredPlaylists(response.data.playlists || []);
+      setFilteredArtists(response.data.artists || []);
+    } catch (error) {
+      console.error('Search error:', error);
+    } finally {
+      setSearching(false);
+    }
+  };
 
-  const filteredArtists = searchQuery
-    ? mockArtists.filter((artist) =>
-        artist.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    
+    // Debounce search
+    if (value.trim()) {
+      handleSearch(value);
+    } else {
+      setFilteredSongs([]);
+      setFilteredPlaylists([]);
+      setFilteredArtists([]);
+    }
+  };
 
   const hasResults =
     filteredSongs.length > 0 ||
