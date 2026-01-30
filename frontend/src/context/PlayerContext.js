@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
-import { mockSongs } from '../mock/musicData';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const PlayerContext = createContext();
 
@@ -24,13 +27,22 @@ export const PlayerProvider = ({ children }) => {
   const [showVideo, setShowVideo] = useState(false);
   const [karaokeMode, setKaraokeMode] = useState(false);
   const playerRef = useRef(null);
-  const intervalRef = useRef(null);
 
-  const playSong = (song, playlistSongs = []) => {
+  const playSong = async (song, playlistSongs = []) => {
     setCurrentSong(song);
     setIsPlaying(true);
+    setCurrentTime(0);
     if (playlistSongs.length > 0) {
       setQueue(playlistSongs);
+    }
+    
+    // Track play on backend
+    try {
+      await axios.post(`${API}/songs/${song.song_id}/play`, {}, {
+        withCredentials: true
+      });
+    } catch (error) {
+      console.error('Error tracking play:', error);
     }
   };
 
@@ -41,7 +53,7 @@ export const PlayerProvider = ({ children }) => {
   const playNext = () => {
     if (queue.length === 0) return;
     
-    const currentIndex = queue.findIndex(s => s.id === currentSong?.id);
+    const currentIndex = queue.findIndex(s => s.song_id === currentSong?.song_id);
     let nextIndex;
     
     if (isShuffled) {
@@ -58,27 +70,25 @@ export const PlayerProvider = ({ children }) => {
       }
     }
     
-    setCurrentSong(queue[nextIndex]);
-    setIsPlaying(true);
+    playSong(queue[nextIndex], queue);
   };
 
   const playPrevious = () => {
     if (queue.length === 0) return;
     
-    const currentIndex = queue.findIndex(s => s.id === currentSong?.id);
+    const currentIndex = queue.findIndex(s => s.song_id === currentSong?.song_id);
     let prevIndex = currentIndex - 1;
     
     if (prevIndex < 0) {
       prevIndex = queue.length - 1;
     }
     
-    setCurrentSong(queue[prevIndex]);
-    setIsPlaying(true);
+    playSong(queue[prevIndex], queue);
   };
 
   const seekTo = (time) => {
     setCurrentTime(time);
-    if (playerRef.current) {
+    if (playerRef.current && playerRef.current.seekTo) {
       playerRef.current.seekTo(time);
     }
   };
@@ -114,43 +124,6 @@ export const PlayerProvider = ({ children }) => {
   const addToQueue = (song) => {
     setQueue([...queue, song]);
   };
-
-  useEffect(() => {
-    // Simulate time updates (will be replaced with real YouTube player events)
-    if (isPlaying && currentSong) {
-      intervalRef.current = setInterval(() => {
-        setCurrentTime(prev => {
-          const next = prev + 1;
-          if (next >= (currentSong.durationSeconds || 0)) {
-            if (repeatMode === 'one') {
-              return 0;
-            } else {
-              playNext();
-              return 0;
-            }
-          }
-          return next;
-        });
-      }, 1000);
-    } else {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-    
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, [isPlaying, currentSong]);
-
-  useEffect(() => {
-    if (currentSong) {
-      setDuration(currentSong.durationSeconds || 0);
-      setCurrentTime(0);
-    }
-  }, [currentSong]);
 
   const value = {
     currentSong,
