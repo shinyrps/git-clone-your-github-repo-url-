@@ -1,12 +1,59 @@
-import React, { useState } from 'react';
-import { mockPlaylists, mockSongs, mockRegions } from '../mock/musicData';
+import React, { useState, useEffect } from 'react';
+import { mockRegions } from '../mock/musicData';
 import PlaylistCard from '../components/PlaylistCard';
 import { ChevronLeft, ChevronRight, Play } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
+import { useAuth } from '../context/AuthContext';
+import axios from 'axios';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
 
 const Home = () => {
   const [selectedRegion, setSelectedRegion] = useState('global');
+  const [songs, setSongs] = useState([]);
+  const [playlists, setPlaylists] = useState([]);
+  const [recentlyPlayed, setRecentlyPlayed] = useState([]);
+  const [loading, setLoading] = useState(true);
   const { playSong } = usePlayer();
+  const { user, isAuthenticated, login } = useAuth();
+
+  useEffect(() => {
+    fetchData();
+  }, [selectedRegion, isAuthenticated]);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      
+      // Fetch songs
+      const songsResponse = await axios.get(`${API}/songs?limit=20`);
+      setSongs(songsResponse.data);
+      
+      // Fetch playlists
+      const playlistsResponse = await axios.get(`${API}/playlists?limit=10`);
+      setPlaylists(playlistsResponse.data);
+      
+      // Fetch recently played if authenticated
+      if (isAuthenticated) {
+        try {
+          const recentResponse = await axios.get(`${API}/library/recently-played`, {
+            withCredentials: true
+          });
+          setRecentlyPlayed(recentResponse.data.slice(0, 4));
+        } catch (error) {
+          console.error('Error fetching recently played:', error);
+        }
+      } else {
+        setRecentlyPlayed(songsResponse.data.slice(0, 4));
+      }
+      
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -15,11 +62,21 @@ const Home = () => {
     return 'Good evening';
   };
 
-  const recentlyPlayed = mockSongs.slice(0, 4);
-  const topPlaylists = mockPlaylists.slice(0, 6);
-  const regionalPlaylists = mockPlaylists.filter(
+  const topPlaylists = playlists.slice(0, 6);
+  const regionalPlaylists = playlists.filter(
     (p) => p.region.toLowerCase() === selectedRegion || p.region.toLowerCase() === 'global'
   );
+
+  if (loading) {
+    return (
+      <div className="flex-1 flex items-center justify-center bg-black text-white">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-900 to-black text-white pb-32">
