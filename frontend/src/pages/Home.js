@@ -195,8 +195,8 @@ const Home = () => {
             </button>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {mockPlaylists.slice(0, 5).map((playlist) => (
-              <PlaylistCard key={playlist.id} playlist={playlist} />
+            {playlists.slice(0, 5).map((playlist) => (
+              <PlaylistCard key={playlist.playlist_id} playlist={playlist} />
             ))}
           </div>
         </section>
