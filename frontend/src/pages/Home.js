@@ -91,9 +91,23 @@ const Home = () => {
               <ChevronRight size={20} />
             </button>
           </div>
-          <button className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform">
-            Log in
-          </button>
+          {!isAuthenticated ? (
+            <button 
+              onClick={login}
+              className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:scale-105 transition-transform"
+            >
+              Log in
+            </button>
+          ) : (
+            <div className="flex items-center gap-3">
+              <img 
+                src={user?.picture} 
+                alt={user?.name}
+                className="w-10 h-10 rounded-full"
+              />
+              <span className="font-semibold">{user?.name}</span>
+            </div>
+          )}
         </div>
       </div>
 
