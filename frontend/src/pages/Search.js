@@ -119,7 +119,11 @@ const Search = () => {
         </div>
 
         {/* Search Results */}
-        {searchQuery && hasResults ? (
+        {searching ? (
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">Searching...</p>
+          </div>
+        ) : searchQuery && hasResults ? (
           <div>
             {/* Filters */}
             <div className="flex gap-2 mb-6">
