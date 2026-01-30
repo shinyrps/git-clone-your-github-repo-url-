@@ -508,7 +508,11 @@ app.include_router(api_router)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=["*"],
+    allow_origins=[
+        "http://localhost:3000",
+        "https://melody-stream-731.preview.emergentagent.com",
+        os.environ.get("FRONTEND_URL", "")
+    ],
     allow_methods=["*"],
     allow_headers=["*"],
 )
