@@ -25,12 +25,12 @@ const TrackList = ({ songs, showHeader = true, playlist = null }) => {
       )}
       <div className="space-y-1">
         {songs.map((song, index) => {
-          const isCurrentSong = currentSong?.id === song.id;
+          const isCurrentSong = currentSong?.song_id === song.song_id;
           const isCurrentlyPlaying = isCurrentSong && isPlaying;
 
           return (
             <div
-              key={song.id}
+              key={song.song_id}
               onClick={() => handlePlaySong(song)}
               className="grid grid-cols-[16px_4fr_2fr_1fr] gap-4 px-4 py-3 rounded-md hover:bg-gray-800 cursor-pointer group transition-colors"
             >
