@@ -6,12 +6,17 @@ from models import YouTubeVideo
 
 logger = logging.getLogger(__name__)
 
-# YouTube API keys (rotating keys for rate limiting)
+# YouTube API keys from environment variables (rotating keys for rate limiting)
 YOUTUBE_API_KEYS = [
-    "AIzaSyB_5S7LMRMbOJTr-0Gi4bfLTGDQzVeQ7ds",  # Primary key
-    "AIzaSyDT1234567890abcdefghijklmnopqrst",  # Backup key 1
-    "AIzaSyEX0987654321zyxwvutsrqponmlkjih"   # Backup key 2
+    os.environ.get('YOUTUBE_API_KEY_1', ''),
+    os.environ.get('YOUTUBE_API_KEY_2', ''),
+    os.environ.get('YOUTUBE_API_KEY_3', '')
 ]
+# Remove empty keys
+YOUTUBE_API_KEYS = [key for key in YOUTUBE_API_KEYS if key]
+
+if not YOUTUBE_API_KEYS:
+    logger.warning("No YouTube API keys configured. YouTube integration will not work.")
 
 current_key_index = 0
 
