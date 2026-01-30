@@ -192,7 +192,7 @@ const Search = () => {
           </div>
         ) : searchQuery ? (
           <div className="text-center py-20">
-            <p className="text-gray-400 text-lg">No results found for "{searchQuery}"</p>
+            <p className="text-gray-400 text-lg">No results found for &quot;{searchQuery}&quot;</p>
           </div>
         ) : (
           <div>
