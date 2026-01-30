@@ -49,7 +49,7 @@ logger = logging.getLogger(__name__)
 
 @api_router.post("/auth/session")
 async def create_user_session(request: Request, response: Response):
-    \"\"\"Exchange session_id for session_token and create user\"\"\"
+    """Exchange session_id for session_token and create user"""
     try:
         body = await request.json()
         session_id = body.get("session_id")
@@ -81,14 +81,14 @@ async def create_user_session(request: Request, response: Response):
 
 @api_router.get("/auth/me")
 async def get_current_user(request: Request):
-    \"\"\"Get current authenticated user\"\"\"
+    """Get current authenticated user"""
     user = await get_user_from_session(request)
     return user
 
 
 @api_router.post("/auth/logout")
 async def logout(request: Request, response: Response):
-    \"\"\"Logout user and clear session\"\"\"
+    """Logout user and clear session"""
     try:
         session_token = request.cookies.get("session_token")
         if session_token:
@@ -109,7 +109,7 @@ async def get_songs(
     region: Optional[str] = None,
     genre: Optional[str] = None
 ):
-    \"\"\"Get all songs with filters\"\"\"
+    """Get all songs with filters"""
     query = {}
     if region and region != "global":
         query["region"] = region
@@ -122,7 +122,7 @@ async def get_songs(
 
 @api_router.get("/songs/search")
 async def search_songs(q: str = Query(..., min_length=1)):
-    \"\"\"Search songs, artists, and playlists\"\"\"
+    """Search songs, artists, and playlists"""
     query_regex = {"$regex": q, "$options": "i"}
     
     # Search songs
@@ -156,7 +156,7 @@ async def search_songs(q: str = Query(..., min_length=1)):
 
 @api_router.get("/songs/{song_id}")
 async def get_song(song_id: str):
-    \"\"\"Get song by ID\"\"\"
+    """Get song by ID"""
     song = await db.songs.find_one({"song_id": song_id}, {"_id": 0})
     if not song:
         raise HTTPException(status_code=404, detail="Song not found")
@@ -165,7 +165,7 @@ async def get_song(song_id: str):
 
 @api_router.post("/songs/{song_id}/play")
 async def track_play(song_id: str, request: Request):
-    \"\"\"Track song play\"\"\"
+    """Track song play"""
     # Increment play count
     await db.songs.update_one(
         {"song_id": song_id},
@@ -197,7 +197,7 @@ async def track_play(song_id: str, request: Request):
 
 @api_router.get("/songs/{song_id}/lyrics")
 async def get_lyrics(song_id: str):
-    \"\"\"Get karaoke lyrics for a song\"\"\"
+    """Get karaoke lyrics for a song"""
     song = await db.songs.find_one({"song_id": song_id}, {"_id": 0, "lyrics": 1})
     if not song:
         raise HTTPException(status_code=404, detail="Song not found")
@@ -211,7 +211,7 @@ async def get_playlists(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100)
 ):
-    \"\"\"Get all public playlists\"\"\"
+    """Get all public playlists"""
     playlists = await db.playlists.find(
         {"is_public": True},
         {"_id": 0}
@@ -221,7 +221,7 @@ async def get_playlists(
 
 @api_router.get("/playlists/{playlist_id}")
 async def get_playlist(playlist_id: str):
-    \"\"\"Get playlist by ID\"\"\"
+    """Get playlist by ID"""
     playlist = await db.playlists.find_one({"playlist_id": playlist_id}, {"_id": 0})
     if not playlist:
         raise HTTPException(status_code=404, detail="Playlist not found")
@@ -238,7 +238,7 @@ async def get_playlist(playlist_id: str):
 
 @api_router.post("/playlists", response_model=Playlist)
 async def create_playlist(playlist: PlaylistCreate, request: Request):
-    \"\"\"Create new playlist\"\"\"
+    """Create new playlist"""
     user = await get_user_from_session(request)
     
     playlist_id = f"playlist_{uuid.uuid4().hex[:12]}"
@@ -272,7 +272,7 @@ async def create_playlist(playlist: PlaylistCreate, request: Request):
 
 @api_router.put("/playlists/{playlist_id}")
 async def update_playlist(playlist_id: str, update: PlaylistUpdate, request: Request):
-    \"\"\"Update playlist\"\"\"
+    """Update playlist"""
     user = await get_user_from_session(request)
     
     # Check ownership
@@ -296,7 +296,7 @@ async def update_playlist(playlist_id: str, update: PlaylistUpdate, request: Req
 
 @api_router.delete("/playlists/{playlist_id}")
 async def delete_playlist(playlist_id: str, request: Request):
-    \"\"\"Delete playlist\"\"\"
+    """Delete playlist"""
     user = await get_user_from_session(request)
     
     # Check ownership
@@ -319,7 +319,7 @@ async def delete_playlist(playlist_id: str, request: Request):
 
 @api_router.post("/playlists/{playlist_id}/songs")
 async def add_song_to_playlist(playlist_id: str, song_id: str, request: Request):
-    \"\"\"Add song to playlist\"\"\"
+    """Add song to playlist"""
     user = await get_user_from_session(request)
     
     # Check ownership
@@ -345,7 +345,7 @@ async def add_song_to_playlist(playlist_id: str, song_id: str, request: Request)
 
 @api_router.delete("/playlists/{playlist_id}/songs/{song_id}")
 async def remove_song_from_playlist(playlist_id: str, song_id: str, request: Request):
-    \"\"\"Remove song from playlist\"\"\"
+    """Remove song from playlist"""
     user = await get_user_from_session(request)
     
     # Check ownership
@@ -368,7 +368,7 @@ async def remove_song_from_playlist(playlist_id: str, song_id: str, request: Req
 
 @api_router.get("/library/liked-songs")
 async def get_liked_songs(request: Request):
-    \"\"\"Get user's liked songs\"\"\"
+    """Get user's liked songs"""
     user = await get_user_from_session(request)
     song_ids = user.get("liked_songs", [])
     
@@ -382,7 +382,7 @@ async def get_liked_songs(request: Request):
 
 @api_router.post("/library/liked-songs/{song_id}")
 async def like_song(song_id: str, request: Request):
-    \"\"\"Like a song\"\"\"
+    """Like a song"""
     user = await get_user_from_session(request)
     
     await db.users.update_one(
@@ -395,7 +395,7 @@ async def like_song(song_id: str, request: Request):
 
 @api_router.delete("/library/liked-songs/{song_id}")
 async def unlike_song(song_id: str, request: Request):
-    \"\"\"Unlike a song\"\"\"
+    """Unlike a song"""
     user = await get_user_from_session(request)
     
     await db.users.update_one(
@@ -408,7 +408,7 @@ async def unlike_song(song_id: str, request: Request):
 
 @api_router.get("/library/playlists")
 async def get_user_playlists(request: Request):
-    \"\"\"Get user's playlists\"\"\"
+    """Get user's playlists"""
     user = await get_user_from_session(request)
     playlist_ids = user.get("playlists", [])
     
@@ -422,7 +422,7 @@ async def get_user_playlists(request: Request):
 
 @api_router.get("/library/recently-played")
 async def get_recently_played(request: Request):
-    \"\"\"Get recently played songs\"\"\"
+    """Get recently played songs"""
     user = await get_user_from_session(request)
     song_ids = user.get("recently_played", [])
     
@@ -442,7 +442,7 @@ async def get_recently_played(request: Request):
 
 @api_router.get("/youtube/search")
 async def youtube_search(q: str = Query(..., min_length=1), max_results: int = Query(10, ge=1, le=50)):
-    \"\"\"Search YouTube for music\"\"\"
+    """Search YouTube for music"""
     try:
         videos = await search_youtube_music(q, max_results)
         return {"videos": videos}
@@ -453,7 +453,7 @@ async def youtube_search(q: str = Query(..., min_length=1), max_results: int = Q
 
 @api_router.get("/youtube/video/{video_id}")
 async def get_video(video_id: str):
-    \"\"\"Get YouTube video details\"\"\"
+    """Get YouTube video details"""
     video = await get_youtube_video_details(video_id)
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
@@ -462,7 +462,7 @@ async def get_video(video_id: str):
 
 @api_router.get("/youtube/related/{video_id}")
 async def get_related(video_id: str, max_results: int = Query(5, ge=1, le=20)):
-    \"\"\"Get related videos\"\"\"
+    """Get related videos"""
     videos = await get_related_videos(video_id, max_results)
     return {"videos": videos}
 
@@ -471,14 +471,14 @@ async def get_related(video_id: str, max_results: int = Query(5, ge=1, le=20)):
 
 @api_router.get("/artists")
 async def get_artists(skip: int = Query(0, ge=0), limit: int = Query(20, ge=1, le=100)):
-    \"\"\"Get all artists\"\"\"
+    """Get all artists"""
     artists = await db.artists.find({}, {"_id": 0}).skip(skip).limit(limit).to_list(limit)
     return artists
 
 
 @api_router.get("/artists/{artist_id}")
 async def get_artist(artist_id: str):
-    \"\"\"Get artist by ID\"\"\"
+    """Get artist by ID"""
     artist = await db.artists.find_one({"artist_id": artist_id}, {"_id": 0})
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
@@ -487,7 +487,7 @@ async def get_artist(artist_id: str):
 
 @api_router.get("/artists/{artist_id}/top-songs")
 async def get_artist_top_songs(artist_id: str):
-    \"\"\"Get artist's top songs\"\"\"
+    """Get artist's top songs"""
     artist = await db.artists.find_one({"artist_id": artist_id}, {"_id": 0})
     if not artist:
         raise HTTPException(status_code=404, detail="Artist not found")
