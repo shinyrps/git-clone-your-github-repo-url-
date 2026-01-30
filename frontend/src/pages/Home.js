@@ -119,7 +119,7 @@ const Home = () => {
         <div className="grid grid-cols-2 gap-4 mb-8">
           {recentlyPlayed.map((song) => (
             <div
-              key={song.id}
+              key={song.song_id}
               onClick={() => playSong(song, songs)}
               className="bg-gray-800/40 rounded-md flex items-center gap-4 cursor-pointer hover:bg-gray-700/60 transition-colors group"
             >
