@@ -504,15 +504,19 @@ async def get_artist_top_songs(artist_id: str):
 # Include the router in the main app
 app.include_router(api_router)
 
-# CORS Middleware
+# CORS Middleware - Load origins from environment variable
+cors_origins = os.environ.get('CORS_ORIGINS', '*')
+if cors_origins == '*':
+    allow_origins = ["*"]
+    allow_credentials = False
+else:
+    allow_origins = [origin.strip() for origin in cors_origins.split(',')]
+    allow_credentials = True
+
 app.add_middleware(
     CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://melody-stream-731.preview.emergentagent.com",
-        os.environ.get("FRONTEND_URL", "")
-    ],
+    allow_credentials=allow_credentials,
+    allow_origins=allow_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )
