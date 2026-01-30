@@ -17,11 +17,12 @@ const Sidebar = () => {
     <div className="w-64 bg-black text-white h-full flex flex-col fixed left-0 top-0 bottom-0">
       {/* Logo */}
       <div className="p-6">
-        <Link to="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
-            <span className="text-white font-bold text-lg">S</span>
+        <Link to="/" className="flex items-center gap-3">
+          <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-400 via-green-500 to-teal-600 rounded-lg flex items-center justify-center transform rotate-3 hover:rotate-0 transition-transform duration-300 shadow-lg shadow-green-500/50">
+            <span className="text-white font-black text-2xl italic transform -rotate-3">S</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-white/20 to-transparent rounded-lg"></div>
           </div>
-          <span className="text-2xl font-bold">Shinyfy</span>
+          <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">Shinyfy</span>
         </Link>
       </div>
 
